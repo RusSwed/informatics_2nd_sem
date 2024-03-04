@@ -75,7 +75,7 @@ void get_square(figure *number, int size_array){
 void get_perimeter(figure *number, int size_array){
     number[size_array].perimeter = number[size_array].count_side*number[size_array].lenght_side;
 
-    cout << "Perimeter = " << number[size_array].perimeter;
+    cout << "Perimeter = " << number[size_array].perimeter << '\n';
 }
 
 void get_coord(figure *number, int size_array){
@@ -83,19 +83,27 @@ void get_coord(figure *number, int size_array){
     double y_centre;
     double R;
     double x_coord, y_coord;
-    double alpha, angle_step, angle;
+    double alpha, beta;
 
-    R = (number[size_array].lenght_side)/(2*sin(M_PI/number[size_array].lenght_side));
-    x_centre = number[size_array].coord_side.x - R*cos((2*M_PI)/(number[size_array].lenght_side));
-    y_centre = number[size_array].coord_side.y - R*sin((2*M_PI)/(number[size_array].lenght_side));
-    alpha = atan2(number[size_array].coord_side.x - x_centre, number[size_array].coord_side.y - y_centre);
-    angle_step = M_PI/number[size_array].lenght_side;
+    R = number[size_array].lenght_side/(2*sin(M_PI/number[size_array].count_side));
+    alpha = atan2(number[size_array].coord_side.y, number[size_array].coord_side.x);
 
-    for(int i = 2; i <= number[size_array].count_side; i++){
-        angle = angle_step*i;
-        x_coord = x_centre + R*cos(angle);
-        y_coord = y_centre + R*sin(angle);
-        cout << "Coord X" << i << "=" << x_coord << '\n';
-        cout << "Coord Y" << i << "=" << y_coord << '\n';
+    x_centre = number[size_array].coord_side.x - R*cos(alpha);
+    y_centre = number[size_array].coord_side.y - R*sin(alpha);
+
+    beta = (2*M_PI)/number[size_array].count_side;
+
+
+    cout << "Radius = " << R << '\n';
+    cout << "X_Centre = " << x_centre << '\n';
+    cout << "Y_Centre = " << y_centre << '\n';
+    cout << "alpha = " << alpha << '\n';
+
+    for(int i = 0; i < number[size_array].count_side; i++)
+    {
+        x_coord = x_centre + R*cos(alpha+beta*i);
+        y_coord = y_centre + R*sin(alpha+beta*i);
+        cout << "X:" << x_coord << " Y:" << y_coord << '\n';
     }
+
 }
