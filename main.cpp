@@ -25,12 +25,17 @@ void get_coord(figure *number,const int size_array);
 void newpage();
 figure* add_figure(figure *number, const int size_array);
 void menu();
+void submenu(figure *number, const int size_array);
+void Delete(figure *number, const int size_array);
+void Max_Perimeter(figure *number, const int size_array);
+void Max_Square(figure *number, const int size_array);
 int main()
 {
     setlocale(LC_CTYPE,"");
     figure *p_number = nullptr;
     int size_array = 0;
     int exit = 0;
+    int press = 0;
     int choise;
 
     while(exit == 0)
@@ -51,8 +56,24 @@ int main()
             output(p_number, size_array);
             break;
         case 3:
+            Delete(p_number, size_array);
+            size_array--;
+            break;
         case 4:
+            submenu(p_number, size_array);
+            break;
         case 5:
+            cout << "If you want close programme press 1\n";
+            cin >> press;
+            if(press == 1)
+            {
+                exit++;
+            }
+            else
+            {
+                exit = 0;
+            }
+            break;
         default:
             cout<<"Error";
         }
@@ -82,7 +103,7 @@ void output(figure *number,const int size_array)
         cout << '\t' << number[i].count_side;
         for(int j = 0; j < number[i].count_side; j++)
         {
-            cout << '\t' << "X-" << number[i].coord_side.x[j] << " Y-" << number[i].coord_side.y[j];
+            cout << '\t' << "X:" << number[i].coord_side.x[j] << " Y:" << number[i].coord_side.y[j];
         }
         cout << '\t' << number[i].perimeter << '\t' << number[i].square << '\n';
     }
@@ -186,6 +207,18 @@ figure* add_figure(figure *number, const int size_array)
  return number;
 }
 
+void Delete(figure *number, const int size_array)
+{
+  int Number_Delete;
+  cout << "Which Polygon to delete" << '\n';
+  cin >> Number_Delete;
+
+  for(int i = Number_Delete - 1; i < size_array; i++)
+  {
+      number[i] = number[i+1];
+  }
+}
+
 void menu()
 {
     cout <<"Menu:"<<'\n';
@@ -194,4 +227,115 @@ void menu()
     cout <<"3 - Delete Polygon"<<'\n';
     cout <<"4 - Maximum Perimeter and Square"<<'\n';
     cout <<"5 - Exit the program"<<'\n';
+}
+
+void submenu(figure *number, const int size_array)
+{
+    cout <<"1 - Determine the Polygon with the maximum Square"<<'\n';
+    cout <<"2 - Determine the Polygon with the maximum Perimeter"<<'\n';
+    cout <<"3 - Go back to the previous menu"<<'\n';
+    int choise;
+    int exit = 0;
+    cin >> choise;
+    while(exit == 0)
+    {
+        switch(choise)
+        {
+        case 1:
+            get_perimeter(number, size_array);
+            Max_Perimeter(number, size_array);
+            break;
+        case 2:
+            get_square(number, size_array);
+            Max_Square(number, size_array);
+            break;
+        case 3:
+            exit++;
+            break;
+        default:
+            cout << "Error";
+            break;
+        }
+
+    }
+
+}
+
+void Max_Perimeter(figure *number, const int size_array)
+{
+    int NumberMaxP = 0;
+    double Maxperimeter = number[0].perimeter;
+    int count_max_perimeter = 0;
+    int array_maxP[size_array];
+
+    for(int i = 1;i < size_array;i++)
+    {
+          if(number[i].perimeter > number[NumberMaxP].perimeter)
+          {
+            NumberMaxP = i;
+            Maxperimeter = number[i].perimeter;
+          }
+    }
+
+    for(int i = 0; i < size_array;i++)
+    {
+      if(number[i].perimeter == Maxperimeter)
+      {
+        count_max_perimeter++;
+        array_maxP[i]=i+1;
+      }
+    }
+
+  if(count_max_perimeter==1)
+  {
+    cout<<"Polygon with max perimeter is polygon number:"<<NumberMaxP+1;
+  }
+  if(count_max_perimeter>1)
+  {
+    cout<<"Polygons with max perimeter:\n";
+    for(int i=0;i<count_max_perimeter;++i)
+      {
+        cout<<"Polygon number:"<<array_maxP[i]<<"\n";
+      }
+  }
+  cout<<'\n';
+}
+void Max_Square(figure *number, const int size_array)
+{
+    int NumberMaxS = 0;
+    double MaxSquare = number[0].square;
+    int count_max_square = 0;
+    int array_maxS[size_array];
+
+    for(int i = 1;i < size_array;i++)
+    {
+          if(number[i].square > number[NumberMaxS].square)
+          {
+            NumberMaxS = i;
+            MaxSquare = number[i].square;
+          }
+    }
+
+    for(int i = 0; i < size_array;i++)
+    {
+      if(number[i].square == MaxSquare)
+      {
+        count_max_square++;
+        array_maxS[i]=i+1;
+      }
+    }
+
+  if(count_max_square==1)
+  {
+    cout<<"Polygon with max perimeter is polygon number:"<<NumberMaxS+1;
+  }
+  if(count_max_square>1)
+  {
+    cout<<"Polygons with max perimeter:\n";
+    for(int i=0;i<count_max_square;++i)
+      {
+        cout<<"Polygon number:"<<array_maxS[i]<<"\n";
+      }
+  }
+  cout<<'\n';
 }
