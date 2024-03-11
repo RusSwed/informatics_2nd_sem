@@ -14,8 +14,8 @@ struct figure{
     double square;
     double perimeter;
     coord coord_side;
-    int farthest_peak;// проверка дальней координаты
-    int test;
+    int farthest_peak;
+    int Cheking_Delete;
 };
 
 
@@ -70,7 +70,7 @@ int main()
             {
                 newpage();
                 Delete(p_number, size_array);
-                if(p_number[size_array-1].test == 1)
+                if(p_number[size_array-1].Cheking_Delete == 1)
                 {
                     size_array--;
                 }
@@ -135,35 +135,68 @@ int main()
 }
 
 
-void input(figure *number,const int size_array){
-    double R;
-    cout << "Enter the number of sides\n";
-    cin >> number[size_array].count_side;
-    if(number[size_array].count_side >= 3)
+void input(figure *number,const int size_array)
+{
+
+    int chek = 1;
+    do
     {
-        cout << "Enter the length of the side\n";
-        cin >> number[size_array].lenght_side;
-        if(number[size_array].lenght_side > 0)
+        cout << "Enter the number of sides(Minimal - 3)\n";
+        cin >> number[size_array].count_side;
+        if(number[size_array].count_side >= 3)
         {
-            R = number[i].lenght_side/(2*sin(M_PI/number[i].count_side));
-            cout << "Enter the coordinate x\n";
-            cin >> number[size_array].coord_side.x[0];
-            cout << "Enter the coordinate y\n";
-            cin >> number[size_array].coord_side.y[0];
+            chek = 0;
         }
         else
         {
-            cout << "The length of the side must be positive!\n";
-            cout << '\n';
+            cout << "Incorrect input, Try again\n";
+        }
+
+    }
+    while(chek != 0);
+    chek++;
+    do
+    {
+        cout << "Enter the length of the side(Length > 0)\n";
+        cin >> number[size_array].lenght_side;
+                if(number[size_array].lenght_side > 0)
+        {
+            chek = 0;
+        }
+        else
+        {
+            cout << "Incorrect input, Try again\n";
+        }
+
+    }
+    while(chek != 0);
+    chek++;
+
+
+    cout << "Enter the coordinate x\n";
+    cin >> number[size_array].coord_side.x[0];
+
+    do
+    {
+        double R = number[size_array].lenght_side/(2*sin(M_PI/number[size_array].count_side));
+        double alpha = acos(number[size_array].coord_side.x[0]/R);
+        double min_y = R*sin(alpha);
+        if((number[size_array].coord_side.x[0] < R) && (number[size_array].coord_side.x[0] > 0) || (number[size_array].coord_side.x[0] > R) && (number[size_array].coord_side.x[0] < 0))
+        cout << "Y nevertheless" << min_y << '\n';
+        cout << "Enter the coordinate y\n";
+        cin >> number[size_array].coord_side.y[0];
+        double Polar_Radius = sqrt(number[size_array].coord_side.x[0]*number[size_array].coord_side.x[0]+number[size_array].coord_side.y[0]*number[size_array].coord_side.y[0]);
+        if(R < Polar_Radius)
+        {
+            chek = 0;
+        }
+        else
+        {
+            cout << "Incorrect input, Try again\n";
         }
     }
-    else
-    {
-        cout << "The imaginary number of sides of the Polygon is 3!\n";
-        cout << '\n';
-    }
-
-
+    while(chek!=0);
+    chek++;
 }
 
 
@@ -178,10 +211,6 @@ void output(figure *number,const int size_array)
             cout << "Number Polygon:" << i+1 << endl;
             cout << "Count Side:" << number[i].count_side << endl;
             cout << "Length Side:" << number[i].lenght_side << endl;
-            if(number[i].farthest_peak == 1)
-            {
-                cout << "The specified coordinate is not the most remote" << endl;
-            }
             for(int j = 0; j < number[i].count_side; j++)
             {
                 cout << "X[" << j+1 << "]=" << number[i].coord_side.x[j] << '\t' <<"Y[" << j+1 << "]=" << number[i].coord_side.y[j] << endl;
@@ -236,11 +265,9 @@ void get_coord(figure *number, const int size_array){
         double y_centre;
         double R;
         double alpha, beta;
-        double Polar_Radius;
 
         R = number[i].lenght_side/(2*sin(M_PI/number[i].count_side));
         alpha = atan2(number[i].coord_side.x[0], number[i].coord_side.y[0]);
-        Polar_Radius = sqrt(number[i].coord_side.x[0]*number[i].coord_side.x[0] + number[i].coord_side.y[0]*number[i].coord_side.y[0]);
 
         x_centre = number[i].coord_side.x[0] - R*cos(alpha);
         y_centre = number[i].coord_side.y[0] - R*sin(alpha);
@@ -252,12 +279,6 @@ void get_coord(figure *number, const int size_array){
             number[i].coord_side.x[j] = x_centre + R*cos(alpha+beta*j);
             number[i].coord_side.y[j] = y_centre + R*sin(alpha+beta*j);
         }
-
-        if(Polar_Radius < R)
-        {
-            number[i].farthest_peak = 1;
-        }
-
     }
 }
 
@@ -310,7 +331,7 @@ void Delete(figure *number, int size_array)
         {
             number[i] = number[i+1];
         }
-        number[size_array-1].test = 1;
+        number[size_array-1].Cheking_Delete = 1;
     }
 }
 
