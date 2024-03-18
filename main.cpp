@@ -29,30 +29,32 @@ figure* add_figure(figure *number, const int size_array);
 void menu();
 void Delete(figure *number, const int size_array);
 double find_max_element(figure *number, int size_array, int type);
+void IGNORE(int CHECK);
 
 
 int main()
 {
     figure *p_number = nullptr;
     int size_array = 0;
-    int exit = '0';
-    char press = '0';
-    char choise;
+    int exit = 0;
+    int press = 0;
+    int choise;
 
 
-    while(exit == '0')
+    while(exit == 0)
     {
         menu();
         cin >> choise;
+        IGNORE(choise);
         switch(choise)
         {
-        case '1':
+        case 1:
             newpage();
             p_number = add_figure(p_number, size_array);
             input(p_number, size_array);
             size_array++;
             break;
-        case '2':
+        case 2:
             if(size_array > 0)
             {
                 get_perimeter(p_number, size_array);
@@ -65,7 +67,7 @@ int main()
                 cout << "No Poligon in database\n" << endl;
             }
             break;
-        case '3':
+        case 3:
             if(size_array > 0)
             {
                 newpage();
@@ -80,25 +82,26 @@ int main()
                 cout << "Error\n";
             }
             break;
-        case '4':
+        case 4:
             newpage();
-            char num_p;
+            int num_p;
             get_perimeter(p_number, size_array);
             get_square(p_number, size_array);
             cout << "1 - Determine the Polygon with the maximum Square" << endl;
             cout << "2 - Determine the Polygon with the maximum Perimeter" << endl;
             cout << "3 - Return to the menu" << endl;
             cin >> num_p;
+            IGNORE(num_p);
             if(size_array > 0)
             {
-                if(num_p == '1')
+                if(num_p == 1)
                 {
                     cout << "Maximum Square:" << find_max_element(p_number,size_array,1) << endl;
                     cout << "To return to the menu, press any key!" << endl;
                     cin.get();
                     cin.get();
                 }
-                else if(num_p == '2')
+                else if(num_p == 2)
                 {
                     cout << "Maximum :" << find_max_element(p_number,size_array,2) << endl;
                     cout << "To return to the menu, press any key!" << endl;
@@ -111,17 +114,18 @@ int main()
                 cout << "There are no Polygons in the database\n";
             }
             break;
-        case '5':
+        case 5:
             newpage();
             cout << "If you want close programs press 1\n";
             cin >> press;
-            if(press == '1')
+            IGNORE(press);
+            if(press == 1)
             {
-                exit = '1';
+                exit = 1;
             }
             else
             {
-                exit = '0';
+                exit = 0;
             }
             break;
         default:
@@ -143,6 +147,7 @@ void input(figure *number,const int size_array)
     {
         cout << "Enter the number of sides(Minimal - 3)\n";
         cin >> number[size_array].count_side;
+        IGNORE(number[size_array].count_side);
         if(number[size_array].count_side >= 3)
         {
             chek = 0;
@@ -159,6 +164,7 @@ void input(figure *number,const int size_array)
     {
         cout << "Enter the length of the side(Length > 0)\n";
         cin >> number[size_array].lenght_side;
+        IGNORE(number[size_array].lenght_side);
                 if(number[size_array].lenght_side > 0)
         {
             chek = 0;
@@ -175,6 +181,7 @@ void input(figure *number,const int size_array)
 
     cout << "Enter the coordinate x\n";
     cin >> number[size_array].coord_side.x[0];
+    IGNORE(number[size_array].coord_side.x[0]);
 
     do
     {
@@ -185,6 +192,7 @@ void input(figure *number,const int size_array)
         cout << "Y nevertheless" << min_y << '\n';
         cout << "Enter the coordinate y\n";
         cin >> number[size_array].coord_side.y[0];
+        IGNORE(number[size_array].coord_side.y[0]);
         double Polar_Radius = sqrt(number[size_array].coord_side.x[0]*number[size_array].coord_side.x[0]+number[size_array].coord_side.y[0]*number[size_array].coord_side.y[0]);
         if(R < Polar_Radius)
         {
@@ -320,6 +328,7 @@ void Delete(figure *number, int size_array)
 
     cout << "Which Polygon to delete" << '\n';
     cin >> Number_Delete;
+    IGNORE(Number_Delete);
 
     if((Number_Delete > size_array)||(Number_Delete <= 0))
     {
@@ -399,4 +408,18 @@ double find_max_element(figure *number, int size_array, int type)
     }
     cout << endl;
     return max1;
+}
+
+void ignoreline()
+{
+    cin.clear();
+    cin.ignore();
+}
+
+void IGNORE(int i)
+{
+    while(cin.fail()){
+        ignoreline();
+        cout << "Enter Number!" << endl;
+    }
 }
