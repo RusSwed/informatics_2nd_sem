@@ -7,6 +7,9 @@ using namespace std;
 struct coord{
     double x[MAX_COORD];
     double y[MAX_COORD];
+    double Polar_Radius_Coord[MAX_COORD];
+    double x_centre;
+    double y_centre;
 };
 struct figure{
     int count_side;
@@ -16,6 +19,7 @@ struct figure{
     coord coord_side;
     int farthest_peak;
     int Cheking_Delete;
+    int Cheking_Coord;
 };
 
 
@@ -145,10 +149,10 @@ void input(figure *number,const int size_array)
     int chek = 1;
     do
     {
-        cout << "Enter the number of sides(Minimal - 3)\n";
+        cout << "Enter the number of sides(Minimal - 3, Maximum - 128)\n";
         cin >> number[size_array].count_side;
         IGNORE(number[size_array].count_side);
-        if(number[size_array].count_side >= 3)
+        if(number[size_array].count_side >= 3 && number[size_array].count_side <= 128)
         {
             chek = 0;
         }
@@ -178,33 +182,53 @@ void input(figure *number,const int size_array)
     while(chek != 0);
     chek++;
 
-
-    cout << "Enter the coordinate x\n";
-    cin >> number[size_array].coord_side.x[0];
-    IGNORE(number[size_array].coord_side.x[0]);
-
     do
     {
-        double R = number[size_array].lenght_side/(2*sin(M_PI/number[size_array].count_side));
-        double alpha = acos(number[size_array].coord_side.x[0]/R);
-        double min_y = R*sin(alpha);
-        if((number[size_array].coord_side.x[0] < R) && (number[size_array].coord_side.x[0] > 0) || (number[size_array].coord_side.x[0] > R) && (number[size_array].coord_side.x[0] < 0))
-        cout << "Y nevertheless" << min_y << '\n';
+        double Max_Polar_Radius = 0;
+        int Max_Index = 0;
+        cout << "Enter the coordinate x\n";
+        cin >> number[size_array].coord_side.x[0];
+        IGNORE(number[size_array].coord_side.x[0]);
+        number[size_array].Cheking_Coord = 0;
         cout << "Enter the coordinate y\n";
         cin >> number[size_array].coord_side.y[0];
         IGNORE(number[size_array].coord_side.y[0]);
-        double Polar_Radius = sqrt(number[size_array].coord_side.x[0]*number[size_array].coord_side.x[0]+number[size_array].coord_side.y[0]*number[size_array].coord_side.y[0]);
-        if(R < Polar_Radius)
+        double R;
+        double alpha, beta;
+        R = number[size_array].lenght_side/(2*sin(M_PI/number[size_array].count_side));
+        alpha = atan2(number[size_array].coord_side.x[0], number[size_array].coord_side.y[0]);
+        number[size_array].coord_side.x_centre = number[size_array].coord_side.x[0] - R*cos(alpha);
+        number[size_array].coord_side.y_centre = number[size_array].coord_side.y[0] - R*sin(alpha);
+        beta = (2*M_PI)/number[size_array].count_side;
+        for(int j = 0; j < number[size_array].count_side; j++)
+        {
+            number[size_array].coord_side.x[j] = number[size_array].coord_side.x_centre + R*cos(alpha+beta*j);
+            number[size_array].coord_side.y[j] = number[size_array].coord_side.y_centre + R*sin(alpha+beta*j);
+            number[size_array].coord_side.Polar_Radius_Coord[j] = sqrt(pow(number[size_array].coord_side.x[j], 2) + pow(number[size_array].coord_side.y[j], 2));
+            if(number[size_array].coord_side.Polar_Radius_Coord[j] > number[size_array].coord_side.Polar_Radius_Coord[0])
+            {
+                number[size_array].Cheking_Coord = 1;
+            }
+         }
+        cout << number[size_array].Cheking_Coord << endl;
+        if(number[size_array].Cheking_Coord == 0)
         {
             chek = 0;
         }
         else
         {
-            cout << "Incorrect input, Try again\n";
+            for(int j = 0; j < number[size_array].count_side; j++)
+            {
+                if(number[size_array].coord_side.Polar_Radius_Coord[j] >= Max_Polar_Radius)
+                {
+                    Max_Polar_Radius = number[size_array].coord_side.Polar_Radius_Coord[j];
+                    Max_Index = j;
+                }
+            }
+            cout << "Under such conditions, the most remote point in this polygon: X - " << number[size_array].coord_side.x[Max_Index] << " Y - " << number[size_array].coord_side.x[Max_Index] << endl;
         }
     }
     while(chek!=0);
-    chek++;
 }
 
 
@@ -219,9 +243,11 @@ void output(figure *number,const int size_array)
             cout << "Number Polygon:" << i+1 << endl;
             cout << "Count Side:" << number[i].count_side << endl;
             cout << "Length Side:" << number[i].lenght_side << endl;
+            cout << "X Centre: " << number[i].coord_side.x_centre << " Y Centre: " << number[i].coord_side.y_centre << endl;
             for(int j = 0; j < number[i].count_side; j++)
             {
                 cout << "X[" << j+1 << "]=" << number[i].coord_side.x[j] << '\t' <<"Y[" << j+1 << "]=" << number[i].coord_side.y[j] << endl;
+                cout << "Polar Radius: " << number[i].coord_side.Polar_Radius_Coord[j] << endl;
             }
             cout << "P = " << number[i].perimeter << endl;
             cout << "S = " << number[i].square << endl;
@@ -269,23 +295,30 @@ void get_coord(figure *number, const int size_array){
 
     for(int i = 0; i < size_array; i++)
     {
-        double x_centre;
-        double y_centre;
         double R;
         double alpha, beta;
 
         R = number[i].lenght_side/(2*sin(M_PI/number[i].count_side));
         alpha = atan2(number[i].coord_side.x[0], number[i].coord_side.y[0]);
 
-        x_centre = number[i].coord_side.x[0] - R*cos(alpha);
-        y_centre = number[i].coord_side.y[0] - R*sin(alpha);
+        number[i].coord_side.x_centre = number[i].coord_side.x[0] - R*cos(alpha);
+        number[i].coord_side.y_centre = number[i].coord_side.y[0] - R*sin(alpha);
 
         beta = (2*M_PI)/number[i].count_side;
 
         for(int j = 0; j < number[i].count_side; j++)
         {
-            number[i].coord_side.x[j] = x_centre + R*cos(alpha+beta*j);
-            number[i].coord_side.y[j] = y_centre + R*sin(alpha+beta*j);
+            number[i].coord_side.x[j] = number[i].coord_side.x_centre + R*cos(alpha+beta*j);
+            number[i].coord_side.y[j] = number[i].coord_side.y_centre + R*sin(alpha+beta*j);
+            number[i].coord_side.Polar_Radius_Coord[j] = sqrt(pow(number[i].coord_side.x[j], 2) + pow(number[i].coord_side.y[j], 2));
+            if(number[i].coord_side.Polar_Radius_Coord[j] > number[i].coord_side.Polar_Radius_Coord[0])
+            {
+                number[size_array].Cheking_Coord = 1;
+            }
+            else
+            {
+                number[size_array].Cheking_Coord = 0;
+            }
         }
     }
 }
