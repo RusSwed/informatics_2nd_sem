@@ -1,6 +1,6 @@
 #include <iostream>
 #include <math.h>
-#include <string>
+#include <string.h>
 
 using namespace std;
 
@@ -23,37 +23,9 @@ public:
     double Calculation_Number_GasStations(){return ((Mileage*(Engine_Consumtion)/100))/Tank_Capacity;}
     string get_name(){return name;}
     void menu();
-    void input();
-    void output();
+    void output(int amount_car, Car* Cars);
     int chek_menu = 0;
 };
-
-Car::Car(int amount_car, Car* Cars)
-{
-    cout << "Enter name vehicle:" << endl;
-    cin >> Cars[amount_car].name;
-    cout << "Enter amount wheels:" << endl;
-    cin >> Cars[amount_car].Number_Wheels;
-    cout << "Enter Tank Capacity";
-    cin >> Cars[amount_car].Tank_Capacity;
-    cout << "Enter Engine_Power";
-    cin >> Cars[amount_car].Engine_Power;
-}
-
-
-void Car::output()
-{
-    Speed = Calculation_Speed();
-    Engine_Consumtion = Calculation_Engine_Consumption();
-
-    cout << "Car: " << name << endl;
-    cout << "Count Wheels: " << Number_Wheels << endl;
-    cout << "Engine Power: " << Engine_Power << endl;
-    cout << "Speed: " << Speed << endl;
-    cout << "Engine Consumtion" << Engine_Consumtion << endl;
-}
-
-
 
 void new_page()
 {
@@ -72,12 +44,80 @@ void IGNORE(int i)
     }
 }
 
+Car::Car(int amount_car, Car* Cars)
+{
+    int chek = 0;
+    cout << "Enter name vehicle:" << endl;
+    cin >> Cars[amount_car].name;
+    while(chek == 0)
+    {
+        cout << "Enter amount wheels:(minimal - 3, maximum - 24" << endl;
+        cin >> Cars[amount_car].Number_Wheels;
+        IGNORE(Cars[amount_car].Number_Wheels);
+        if(Cars[amount_car].Number_Wheels >= 3 && Cars[amount_car].Number_Wheels <= 24)
+        {
+            chek = 1;
+        }
+        else
+        {
+            cout << "Enter try again" << endl;
+        }
+    }
+    chek--;
+    while(chek == 0)
+    {
+         cout << "Enter Tank Capacity:" << endl;
+         cin >> Cars[amount_car].Tank_Capacity;
+         IGNORE(Cars[amount_car].Tank_Capacity);
+         if(Cars[amount_car].Tank_Capacity > 0)
+         {
+             chek = 1;
+         }
+         else
+         {
+             cout << "Enter try again" << endl;
+         }
+    }
+    chek--;
+    while(chek == 0)
+    {
+         cout << "Enter Engine Power:" << endl;
+         cin >> Cars[amount_car].Engine_Power;
+         IGNORE(Cars[amount_car].Engine_Power);
+         if(Cars[amount_car].Engine_Power > 0)
+         {
+             chek = 1;
+         }
+         else
+         {
+             cout << "Enter try again" << endl;
+         }
+    }
+}
+
+
+void Car::output(int amount_car, Car* Cars)
+{
+    Cars[amount_car].Speed = Cars[amount_car].Calculation_Speed();
+    Cars[amount_car].Engine_Consumtion = Cars[amount_car].Calculation_Engine_Consumption();
+
+    cout << "Car: " << Cars[amount_car].name << endl;
+    cout << "Count Wheels: " << Cars[amount_car].Number_Wheels << endl;
+    cout << "Engine Power: " << Cars[amount_car].Engine_Power << endl;
+    cout << "Speed: " << Cars[amount_car].Speed << endl;
+    cout << "Engine Consumtion:" << Cars[amount_car].Engine_Consumtion << endl;
+}
+
+
 void menu(int amount_car, Car *Cars)
 {
     int exit = 0;
     int press = 0;
+    int chek = 0;
+    int i = -1;
     int choise;
-       while(exit == 0)
+    double Length_Route;
+     while(exit == 0)
 {
     cout << "1 - Enter data about vehicles" << endl;
     cout << "2 - Database vehicles" << endl;
@@ -97,19 +137,61 @@ void menu(int amount_car, Car *Cars)
     switch(choise)
     {
         case 1:
-            int i;
+            new_page();
+            cout << "Enter number Vehicle:" << endl;
             cin >> i;
-            Car(i, Cars);
+            if(i <= amount_car && i > 0)
+             {
+                 i--;
+                 Car(i, Cars);
+             }
+             else
+            {
+                    cout << "This Vehicle no in database" << endl;
+            }
         break;
         case 2:
-            int j;
-            cin >> j;
-            Cars[amount_car].output();
+            new_page();
+            if(i >= 0)
+            {
+                cout << i << endl;
+                cout << "Enter number Vehicle:" << endl;
+                cin >> i;
+                if(i <= amount_car && i > 0)
+                 {
+                     i--;
+                     Cars[amount_car].output(i, Cars);
+                 }
+                 else
+                 {
+                        cout << "This Vehicle no in database" << endl;
+                 }
+            }
+            else
+            {
+                cout << "No Vehicle in database" << endl;
+            }
             break;
         case 3:
+            new_page();
+            while(chek == 0)
+            {
+                cout << "Enter the length of the route:" << endl;
+                cin >> Length_Route;
+                IGNORE(Length_Route);
+                if(Length_Route > 0)
+                {
+                    chek = 1;
+                }
+                else
+                {
+                    cout << "Enter try again" << endl;
+                }
+            }
+            chek--;
             break;
         case 4:
-
+            break;
         case 0:
             cout << "If you want close programs press 1\n";
             cin >> press;
