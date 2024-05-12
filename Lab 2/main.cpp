@@ -194,6 +194,7 @@ void menu(int amount_car, Car *Cars)
             new_page();
             cout << "Enter number Vehicle:" << endl;
             cin >> i;
+            IGNORE(i);
             if(i <= amount_car && i > 0)
              {
                  i--;
@@ -210,6 +211,7 @@ void menu(int amount_car, Car *Cars)
             {
                 cout << "Enter number Vehicle:" << endl;
                 cin >> i;
+                IGNORE(i);
                 if(i <= amount_car && i > 0)
                  {
                      i--;
@@ -286,28 +288,33 @@ void menu(int amount_car, Car *Cars)
                 exit = 0;
             }
         break;
-        if(Cars[amount_car].check_menu == 1)
+        case 5:
+            if(Cars[amount_car].check_menu == 1)
         {
-            case 5:
-                new_page();
-                Sorting(Travel_Time_array, count_Gas_Stations, array_name, amount_car);
+            new_page();
+            Sorting(Travel_Time_array, count_Gas_Stations, array_name, amount_car);
+            {
+                for(int i = 0; i < amount_car; i++)
                 {
-                    for(int i = 0; i < amount_car; i++)
-                    {
-                        cout << "The time of passing the route by car " << array_name[i] << endl;
-                        cout << "Time: " << Travel_Time_array[i] << endl;
-                        cout << "Count Gas Stations: " << count_Gas_Stations[i] << endl;
-                        cout << '\n' << endl;
-                    }
+                    cout << "The time of passing the route by car " << array_name[i] << endl;
+                    cout << "Time: " << Travel_Time_array[i] << endl;
+                    cout << "Count Gas Stations: " << count_Gas_Stations[i] << endl;
+                    cout << '\n' << endl;
                 }
-            break;
+            }
         }
+        else
+        {
+            cout << "Error!" << endl;
+        }
+        break;
         default:
         cout<<"Error\n";
         break;
     }
 }
 }
+
 
 int main()
 {
