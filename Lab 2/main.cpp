@@ -18,7 +18,7 @@ public:
     Car(int amount_car, Car* Cars);
     ~Car(){{cout << "Vehicle deleted" << endl;}}
     double Calculation_Speed(){return sqrt(Engine_Power)*(70/Number_Wheels-2.5);}
-    double Calculation_Engine_Consumption(){return pow(Engine_Power, 1/3)+sqrt(Engine_Power)-6.25;}
+    double Calculation_Engine_Consumption(){return fabs(pow(Engine_Power, 1/3)+sqrt(Engine_Power)-6.25);}
     double Calculation_Travel_Time(double Length_Rote){return (Length_Rote/Speed);}
     int Calculation_Number_GasStations(double Length_Rote);
     string get_name(){return name;}
@@ -55,10 +55,10 @@ Car::Car(int amount_car, Car* Cars)
     cin >> Cars[amount_car].name;
     while(check == 0)
     {
-        cout << "Enter amount wheels:(minimal - 3, maximum - 24" << endl;
+        cout << "Enter amount wheels: " << endl;
         cin >> Cars[amount_car].Number_Wheels;
         IGNORE(Cars[amount_car].Number_Wheels);
-        if(Cars[amount_car].Number_Wheels >= 3 && Cars[amount_car].Number_Wheels <= 24)
+        if(Cars[amount_car].Number_Wheels > 0)
         {
             check = 1;
         }
@@ -294,10 +294,19 @@ void menu(int amount_car, Car *Cars)
             new_page();
             Sorting(Travel_Time_array, count_Gas_Stations, array_name, amount_car);
             {
+                int hours[amount_car];
+                double cur_time[amount_car];
+                int minutes[amount_car];
+                int seconds[amount_car];
                 for(int i = 0; i < amount_car; i++)
                 {
                     cout << "The time of passing the route by car " << array_name[i] << endl;
                     cout << "Time: " << Travel_Time_array[i] << endl;
+                    hours[i] = static_cast<int>(Travel_Time_array[i]);
+                    cur_time[i] = (Travel_Time_array[i] - hours[i])*60;
+                    minutes[i] = static_cast<int>(cur_time[i]);
+                    seconds[i] = static_cast<int>((cur_time[i] - minutes[i])*60);
+                    cout << "Time: " << hours[i] << ":" << minutes[i] << ":" << seconds[i] << endl;
                     cout << "Count Gas Stations: " << count_Gas_Stations[i] << endl;
                     cout << '\n' << endl;
                 }
@@ -334,5 +343,4 @@ int main()
     delete [] Cars;
     return 0;
 }
-
 
