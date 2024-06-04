@@ -62,7 +62,7 @@ int main()
             {
                 get_perimeter(p_number, size_array);
                 get_square(p_number, size_array);
-                //get_coord(p_number, size_array);
+                get_coord(p_number, size_array);
                 output(p_number, size_array);
             }
             else
@@ -74,7 +74,6 @@ int main()
             if(size_array > 0)
             {
                 newpage();
-                cout << size_array << endl;
                 Delete(p_number, size_array);
             }
             else
@@ -178,7 +177,7 @@ void input(figure *number,const int size_array)
     while(chek != 0);
     chek++;
 
-    do
+    /*do
     {
         cout << "Enter the coordinate x\n";
         cin >> number[size_array].coord_side.x[0];
@@ -198,7 +197,33 @@ void input(figure *number,const int size_array)
             cout << "Incorrect input, Try again\n";
         }
     }
+    while(chek!=0);*/
+    cout << "Enter the coordinate x\n";
+    cin >> number[size_array].coord_side.x[0];
+    IGNORE(number[size_array].coord_side.x[0]);
+
+     do
+    {
+        double R = number[size_array].lenght_side/(2*sin(M_PI/number[size_array].count_side));
+        double alpha = acos(number[size_array].coord_side.x[0]/R);
+        double min_y = R*sin(alpha);
+        if(((number[size_array].coord_side.x[0] < R) && (number[size_array].coord_side.x[0] > 0)) || ((number[size_array].coord_side.x[0] > R) && (number[size_array].coord_side.x[0] < 0)))
+        cout << "Y nevertheless " << min_y << '\n';
+        cout << "Enter the coordinate y\n";
+        cin >> number[size_array].coord_side.y[0];
+        IGNORE(number[size_array].coord_side.y[0]);
+        double Polar_Radius = sqrt(number[size_array].coord_side.x[0]*number[size_array].coord_side.x[0]+number[size_array].coord_side.y[0]*number[size_array].coord_side.y[0]);
+        if(R < Polar_Radius)
+        {
+            chek = 0;
+        }
+        else
+        {
+            cout << "Incorrect input, Try again\n";
+        }
+    }
     while(chek!=0);
+    chek++;
 }
 
 
@@ -213,11 +238,9 @@ void output(figure *number,const int size_array)
             cout << "Number Polygon:" << i+1 << endl;
             cout << "Count Side:" << number[i].count_side << endl;
             cout << "Length Side:" << number[i].lenght_side << endl;
-            cout << "X Centre: " << number[i].coord_side.x_centre << " Y Centre: " << number[i].coord_side.y_centre << endl;
             for(int j = 0; j < number[i].count_side; j++)
             {
                 cout << "X[" << j+1 << "]=" << number[i].coord_side.x[j] << '\t' <<"Y[" << j+1 << "]=" << number[i].coord_side.y[j] << endl;
-                cout << "Polar Radius: " << number[i].coord_side.Polar_Radius_Coord[j] << endl;
             }
             cout << "P = " << number[i].perimeter << endl;
             cout << "S = " << number[i].square << endl;
@@ -261,10 +284,10 @@ void get_perimeter(figure *number, const int size_array){
 }
 
 
-void get_coord(figure *number, const int i){
-    //for(int i = 0; i < size_array; i++)
+void get_coord(figure *number, const int size_array){
+    for(int i = 0; i < size_array; i++)
 
-    //{
+    {
         double R;
         double alpha, beta;
 
@@ -283,7 +306,7 @@ void get_coord(figure *number, const int i){
         {
             number[i].coord_side.x[j] = number[i].coord_side.x_centre + R*cos(alpha+beta*j);
             number[i].coord_side.y[j] = number[i].coord_side.y_centre + R*sin(alpha+beta*j);
-            number[i].coord_side.Polar_Radius_Coord[j] = sqrt(pow(number[i].coord_side.x[j], 2) + pow(number[i].coord_side.y[j], 2));
+            /*number[i].coord_side.Polar_Radius_Coord[j] = sqrt(pow(number[i].coord_side.x[j], 2) + pow(number[i].coord_side.y[j], 2));
             cout << j << "==" << number[i].coord_side.Polar_Radius_Coord[j] << endl;
             if(number[i].coord_side.Polar_Radius_Coord[j] > max_Polar_Radius)
             {
@@ -295,7 +318,9 @@ void get_coord(figure *number, const int i){
         if(max_Polar_Radius == number[i].coord_side.Polar_Radius_Coord[0])
         {
             number[i].Cheking_Coord = 1;
+        }*/
         }
+    }
 }
 
 
