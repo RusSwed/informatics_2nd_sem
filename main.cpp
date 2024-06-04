@@ -213,7 +213,7 @@ void input(figure *number,const int size_array)
         cin >> number[size_array].coord_side.y[0];
         IGNORE(number[size_array].coord_side.y[0]);
         double Polar_Radius = sqrt(number[size_array].coord_side.x[0]*number[size_array].coord_side.x[0]+number[size_array].coord_side.y[0]*number[size_array].coord_side.y[0]);
-        if(R < Polar_Radius)
+        if(R - Polar_Radius < 0)
         {
             chek = 0;
         }
@@ -288,37 +288,37 @@ void get_coord(figure *number, const int size_array){
     for(int i = 0; i < size_array; i++)
 
     {
-        double R;
-        double alpha, beta;
+        double R = number[i].lenght_side/(2*sin(M_PI/number[i].count_side));
+        double alpha;
+        double Modul_X = fabs(number[i].coord_side.x[0]);
+        double Modul_Y = fabs(number[i].coord_side.y[0]);
+        alpha = atan2(Modul_X, Modul_Y);
 
-        R = number[i].lenght_side/(2*sin(M_PI/number[i].count_side));
-        alpha = atan2(number[i].coord_side.x[0], number[i].coord_side.y[0]);
+        int flag_X = 1;
+        int flag_Y = 1;
+        if(number[i].coord_side.x[0] < 0){flag_X = -1;}
+        if(number[i].coord_side.y[0] < 0){flag_Y = -1;}
 
-        number[i].coord_side.x_centre = number[i].coord_side.x[0] - R*cos(alpha);
-        number[i].coord_side.y_centre = number[i].coord_side.y[0] - R*sin(alpha);
+        number[i].coord_side.x_centre = Modul_X - R*cos(alpha);
+        number[i].coord_side.y_centre = Modul_Y - R*sin(alpha);
 
-        number[i].coord_side.Polar_Radius_Coord[0] = sqrt(pow(number[i].coord_side.x[0], 2) + pow(number[i].coord_side.y[0], 2));
-        double max_Polar_Radius = number[i].coord_side.Polar_Radius_Coord[0];
-
-        beta = (2*M_PI)/number[i].count_side;
+        double beta = (2*M_PI)/number[i].count_side;
 
         for(int j = 0; j < number[i].count_side; j++)
         {
-            number[i].coord_side.x[j] = number[i].coord_side.x_centre + R*cos(alpha+beta*j);
-            number[i].coord_side.y[j] = number[i].coord_side.y_centre + R*sin(alpha+beta*j);
-            /*number[i].coord_side.Polar_Radius_Coord[j] = sqrt(pow(number[i].coord_side.x[j], 2) + pow(number[i].coord_side.y[j], 2));
-            cout << j << "==" << number[i].coord_side.Polar_Radius_Coord[j] << endl;
-            if(number[i].coord_side.Polar_Radius_Coord[j] > max_Polar_Radius)
+            if(flag_X != flag_Y)
             {
-                max_Polar_Radius = number[i].coord_side.Polar_Radius_Coord[j];
+                double new_alpha = ((atan(Modul_Y/Modul_X))-j*beta);
+                number[i].coord_side.x[j] = flag_X*(number[i].coord_side.x_centre + R*cos(new_alpha));
+                number[i].coord_side.y[j] = flag_Y*(number[i].coord_side.y_centre + R*sin(new_alpha));
             }
-            cout << max_Polar_Radius << endl;
-        }
-        cout << "MAX: " << max_Polar_Radius << " ZERO: " << number[i].coord_side.Polar_Radius_Coord[0] << endl;
-        if(max_Polar_Radius == number[i].coord_side.Polar_Radius_Coord[0])
-        {
-            number[i].Cheking_Coord = 1;
-        }*/
+            else
+            {
+                double new_alpha = ((atan(Modul_Y/Modul_X))+j*beta);
+                number[i].coord_side.x[j] = flag_X*(number[i].coord_side.x_centre + R*cos(new_alpha));
+                number[i].coord_side.y[j] = flag_Y*(number[i].coord_side.y_centre + R*sin(new_alpha));
+            }
+
         }
     }
 }
