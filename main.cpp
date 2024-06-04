@@ -63,7 +63,7 @@ int main()
             {
                 get_perimeter(p_number, size_array);
                 get_square(p_number, size_array);
-                get_coord(p_number, size_array);
+                //get_coord(p_number, size_array);
                 output(p_number, size_array);
             }
             else
@@ -76,7 +76,7 @@ int main()
             {
                 newpage();
                 Delete(p_number, size_array);
-                if(p_number[size_array-1].Cheking_Delete == 1)
+                if(p_number[size_array].Cheking_Delete == 1)
                 {
                     size_array--;
                 }
@@ -193,39 +193,15 @@ void input(figure *number,const int size_array)
         cout << "Enter the coordinate y\n";
         cin >> number[size_array].coord_side.y[0];
         IGNORE(number[size_array].coord_side.y[0]);
-        double R;
-        double alpha, beta;
-        R = number[size_array].lenght_side/(2*sin(M_PI/number[size_array].count_side));
-        alpha = atan2(number[size_array].coord_side.x[0], number[size_array].coord_side.y[0]);
-        number[size_array].coord_side.x_centre = number[size_array].coord_side.x[0] - R*cos(alpha);
-        number[size_array].coord_side.y_centre = number[size_array].coord_side.y[0] - R*sin(alpha);
-        beta = (2*M_PI)/number[size_array].count_side;
-        for(int j = 0; j < number[size_array].count_side; j++)
-        {
-            number[size_array].coord_side.x[j] = number[size_array].coord_side.x_centre + R*cos(alpha+beta*j);
-            number[size_array].coord_side.y[j] = number[size_array].coord_side.y_centre + R*sin(alpha+beta*j);
-            number[size_array].coord_side.Polar_Radius_Coord[j] = sqrt(pow(number[size_array].coord_side.x[j], 2) + pow(number[size_array].coord_side.y[j], 2));
-            if(number[size_array].coord_side.Polar_Radius_Coord[j] > number[size_array].coord_side.Polar_Radius_Coord[0])
-            {
-                number[size_array].Cheking_Coord = 1;
-            }
-         }
-        cout << number[size_array].Cheking_Coord << endl;
-        if(number[size_array].Cheking_Coord == 0)
+        get_coord(number, size_array);
+        if(number[size_array].Cheking_Coord == 1)
         {
             chek = 0;
+            cout << "The data has been successfully entered" << endl;
         }
         else
         {
-            for(int j = 0; j < number[size_array].count_side; j++)
-            {
-                if(number[size_array].coord_side.Polar_Radius_Coord[j] >= Max_Polar_Radius)
-                {
-                    Max_Polar_Radius = number[size_array].coord_side.Polar_Radius_Coord[j];
-                    Max_Index = j;
-                }
-            }
-            cout << "Under such conditions, the most remote point in this polygon: X - " << number[size_array].coord_side.x[Max_Index] << " Y - " << number[size_array].coord_side.x[Max_Index] << endl;
+            cout << "Incorrect input, Try again\n";
         }
     }
     while(chek!=0);
@@ -291,10 +267,10 @@ void get_perimeter(figure *number, const int size_array){
 }
 
 
-void get_coord(figure *number, const int size_array){
+void get_coord(figure *number, const int i){
+    //for(int i = 0; i < size_array; i++)
 
-    for(int i = 0; i < size_array; i++)
-    {
+    //{
         double R;
         double alpha, beta;
 
@@ -304,6 +280,9 @@ void get_coord(figure *number, const int size_array){
         number[i].coord_side.x_centre = number[i].coord_side.x[0] - R*cos(alpha);
         number[i].coord_side.y_centre = number[i].coord_side.y[0] - R*sin(alpha);
 
+        number[i].coord_side.Polar_Radius_Coord[0] = sqrt(pow(number[i].coord_side.x[0], 2) + pow(number[i].coord_side.y[0], 2));
+        double min_Polar_Radius = number[i].coord_side.Polar_Radius_Coord[0];
+
         beta = (2*M_PI)/number[i].count_side;
 
         for(int j = 0; j < number[i].count_side; j++)
@@ -311,16 +290,19 @@ void get_coord(figure *number, const int size_array){
             number[i].coord_side.x[j] = number[i].coord_side.x_centre + R*cos(alpha+beta*j);
             number[i].coord_side.y[j] = number[i].coord_side.y_centre + R*sin(alpha+beta*j);
             number[i].coord_side.Polar_Radius_Coord[j] = sqrt(pow(number[i].coord_side.x[j], 2) + pow(number[i].coord_side.y[j], 2));
-            if(number[i].coord_side.Polar_Radius_Coord[j] > number[i].coord_side.Polar_Radius_Coord[0])
+            //cout << j << "==" << number[i].coord_side.Polar_Radius_Coord[j] << endl;
+            if(number[i].coord_side.Polar_Radius_Coord[j] < min_Polar_Radius)
             {
-                number[size_array].Cheking_Coord = 1;
+                min_Polar_Radius = number[i].coord_side.Polar_Radius_Coord[j];
+                number[i].Cheking_Coord = 1;
             }
-            else
-            {
-                number[size_array].Cheking_Coord = 0;
-            }
+            //cout << max_Polar_Radius << endl;
         }
-    }
+        //cout << "MIN: " << min_Polar_Radius << " ZERO: " << number[i].coord_side.Polar_Radius_Coord[0] << endl;
+        //if(max_Polar_Radius == number[i].coord_side.Polar_Radius_Coord[0])
+        //{
+         //   number[i].Cheking_Coord = 1;
+        //}
 }
 
 
@@ -373,7 +355,7 @@ void Delete(figure *number, int size_array)
         {
             number[i] = number[i+1];
         }
-        number[size_array-1].Cheking_Delete = 1;
+        number[size_array].Cheking_Delete = 1;
     }
 }
 
