@@ -18,7 +18,6 @@ struct figure{
     double perimeter;
     coord coord_side;
     int farthest_peak;
-    int Cheking_Delete;
     int Cheking_Coord;
 };
 
@@ -31,7 +30,7 @@ void get_coord(figure *number,const int size_array);
 void newpage();
 figure* add_figure(figure *number, const int size_array);
 void menu();
-void Delete(figure *number, const int size_array);
+void Delete(figure *&number, int& size_array);
 double find_max_element(figure *number, int size_array, int type);
 void IGNORE(int CHECK);
 
@@ -75,11 +74,8 @@ int main()
             if(size_array > 0)
             {
                 newpage();
+                cout << size_array << endl;
                 Delete(p_number, size_array);
-                if(p_number[size_array].Cheking_Delete == 1)
-                {
-                    size_array--;
-                }
             }
             else
             {
@@ -184,8 +180,6 @@ void input(figure *number,const int size_array)
 
     do
     {
-        double Max_Polar_Radius = 0;
-        int Max_Index = 0;
         cout << "Enter the coordinate x\n";
         cin >> number[size_array].coord_side.x[0];
         IGNORE(number[size_array].coord_side.x[0]);
@@ -281,7 +275,7 @@ void get_coord(figure *number, const int i){
         number[i].coord_side.y_centre = number[i].coord_side.y[0] - R*sin(alpha);
 
         number[i].coord_side.Polar_Radius_Coord[0] = sqrt(pow(number[i].coord_side.x[0], 2) + pow(number[i].coord_side.y[0], 2));
-        double min_Polar_Radius = number[i].coord_side.Polar_Radius_Coord[0];
+        double max_Polar_Radius = number[i].coord_side.Polar_Radius_Coord[0];
 
         beta = (2*M_PI)/number[i].count_side;
 
@@ -290,19 +284,18 @@ void get_coord(figure *number, const int i){
             number[i].coord_side.x[j] = number[i].coord_side.x_centre + R*cos(alpha+beta*j);
             number[i].coord_side.y[j] = number[i].coord_side.y_centre + R*sin(alpha+beta*j);
             number[i].coord_side.Polar_Radius_Coord[j] = sqrt(pow(number[i].coord_side.x[j], 2) + pow(number[i].coord_side.y[j], 2));
-            //cout << j << "==" << number[i].coord_side.Polar_Radius_Coord[j] << endl;
-            if(number[i].coord_side.Polar_Radius_Coord[j] < min_Polar_Radius)
+            cout << j << "==" << number[i].coord_side.Polar_Radius_Coord[j] << endl;
+            if(number[i].coord_side.Polar_Radius_Coord[j] > max_Polar_Radius)
             {
-                min_Polar_Radius = number[i].coord_side.Polar_Radius_Coord[j];
-                number[i].Cheking_Coord = 1;
+                max_Polar_Radius = number[i].coord_side.Polar_Radius_Coord[j];
             }
-            //cout << max_Polar_Radius << endl;
+            cout << max_Polar_Radius << endl;
         }
-        //cout << "MIN: " << min_Polar_Radius << " ZERO: " << number[i].coord_side.Polar_Radius_Coord[0] << endl;
-        //if(max_Polar_Radius == number[i].coord_side.Polar_Radius_Coord[0])
-        //{
-         //   number[i].Cheking_Coord = 1;
-        //}
+        cout << "MAX: " << max_Polar_Radius << " ZERO: " << number[i].coord_side.Polar_Radius_Coord[0] << endl;
+        if(max_Polar_Radius == number[i].coord_side.Polar_Radius_Coord[0])
+        {
+            number[i].Cheking_Coord = 1;
+        }
 }
 
 
@@ -337,7 +330,7 @@ figure* add_figure(figure *number, const int size_array)
 }
 
 
-void Delete(figure *number, int size_array)
+void Delete(figure *&number, int& size_array)
 {
     int Number_Delete;
 
@@ -348,15 +341,24 @@ void Delete(figure *number, int size_array)
     if((Number_Delete > size_array)||(Number_Delete <= 0))
     {
        cout << "There is no such Polygon in the database\n";
+       return;
     }
-    else if(Number_Delete <= size_array)
-    {
-        for(int i = Number_Delete - 1; i < size_array; i++)
-        {
-            number[i] = number[i+1];
-        }
-        number[size_array].Cheking_Delete = 1;
-    }
+
+    figure* new_number = new figure[size_array - 1];
+
+  for (int i = 0; i < Number_Delete - 1; ++i)
+  {
+    new_number[i] = number[i];
+  }
+
+  for (int i = Number_Delete; i < size_array; ++i)
+  {
+    new_number[i - 1] = number[i];
+  }
+
+  delete[] number;
+  number = new_number;
+  size_array--;
 }
 
 void menu()
