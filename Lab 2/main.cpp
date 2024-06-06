@@ -101,7 +101,7 @@ void Sorting(Car *&Vehicle, int amount_car)
     for(int i = 0; i < amount_car; i++)
     {
  bool flag = true;
-        for(int j = 0; j < amount_car-1; j++)
+        for(int j = 0; j < amount_car-(i+1); j++)
         {
             bool flag = false;
             if(Vehicle[j].Time > Vehicle[j+1].Time)
@@ -243,7 +243,7 @@ int main()
           break;
         }
 
-         case (3):
+         case 3:
         {
             new_page();
             while(check == 0)
@@ -266,7 +266,7 @@ int main()
             break;
         }
 
-        case (4):
+        case 4:
         {
            if(Check_Length_Route == 1 && amount_car > 0)
             {
@@ -286,7 +286,7 @@ int main()
             }
             break;
         }
-        case (5):
+        case 5:
         {
 
             new_page();
