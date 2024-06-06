@@ -4,30 +4,34 @@
 
 using namespace std;
 
+int amount_car = 0;
 class Car{
     int Number_Wheels;
-    double Mileage;
     double Tank_Capacity;
     double Speed;
     double Engine_Consumtion;
     double Engine_Power;
-    double Time;
-    string name;
 public:
-    Car(){{cout << "Vehicle created" << endl;}};
-    Car(int amount_car, Car* Cars);
+    string name;
+    double Mileage;
+    double Time;
+    int Number_Gas_Station;
+    Car();
+    Car(string name_car, int nWheels, double Tank, double power);
     ~Car(){{cout << "Vehicle deleted" << endl;}}
-    double Calculation_Speed(){return sqrt(Engine_Power)*(70/Number_Wheels-2.5);}
+    double Calculation_Speed(){return fabs(sqrt(Engine_Power) * ((70 / double(Number_Wheels)) - 2.5));}
     double Calculation_Engine_Consumption(){return fabs(pow(Engine_Power, 1/3)+sqrt(Engine_Power)-6.25);}
-    double Calculation_Travel_Time(double Length_Rote){return (Length_Rote/Speed);}
-    int Calculation_Number_GasStations(double Length_Rote);
+    double Calculation_Travel_Time(double Mileage){return Mileage/Speed;}
+    int Calculation_Number_GasStations(double Mileage);
     string get_name(){return name;}
     void menu();
-    void output(int amount_car, Car* Cars);
-    int check_menu = 0;
-    int Check_Number_Vehicle = 0;
+    int check_menu;
+    void output();
+    void output_time();
 };
 
+void menu();
+void add_car(Car *&Vehicle, int &amount_car, Car cars);
 
 void new_page()
 {
@@ -38,196 +42,209 @@ void new_page()
 }
 
 
-void IGNORE(int i)
+int IGNORE(int i)
 {
+    int check = 0;
     while(cin.fail()){
         cin.clear();
         cin.ignore();
         cout << "Enter Number!" << endl;
     }
+    if(i > 0)
+    {
+        check = 1;
+    }
+    else
+    {
+        cout << "Error, Try Again" << endl;
+    }
+    return check;
 }
 
-
-Car::Car(int amount_car, Car* Cars)
+Car::Car()
 {
-    int check = 0;
-    cout << "Enter name vehicle:" << endl;
-    cin >> Cars[amount_car].name;
-    while(check == 0)
-    {
-        cout << "Enter amount wheels: " << endl;
-        cin >> Cars[amount_car].Number_Wheels;
-        IGNORE(Cars[amount_car].Number_Wheels);
-        if(Cars[amount_car].Number_Wheels > 0)
-        {
-            check = 1;
-        }
-        else
-        {
-            cout << "Enter try again" << endl;
-        }
-    }
-    check--;
-    while(check == 0)
-    {
-         cout << "Enter Tank Capacity:" << endl;
-         cin >> Cars[amount_car].Tank_Capacity;
-         IGNORE(Cars[amount_car].Tank_Capacity);
-         if(Cars[amount_car].Tank_Capacity > 0)
-         {
-             check = 1;
-         }
-         else
-         {
-             cout << "Enter try again" << endl;
-         }
-    }
-    check--;
-    while(check == 0)
-    {
-         cout << "Enter Engine Power:" << endl;
-         cin >> Cars[amount_car].Engine_Power;
-         IGNORE(Cars[amount_car].Engine_Power);
-         if(Cars[amount_car].Engine_Power > 0)
-         {
-             check = 1;
-         }
-         else
-         {
-             cout << "Enter try again" << endl;
-         }
-    }
-    Cars[amount_car].Check_Number_Vehicle = 1;
+    cout << "Vehicle created" << endl;
 }
 
-
-void Car::output(int amount_car, Car* Cars)
+Car::Car(string name_car, int nWheels, double Tank, double power)
 {
-    Cars[amount_car].Speed = Cars[amount_car].Calculation_Speed();
-    Cars[amount_car].Engine_Consumtion = Cars[amount_car].Calculation_Engine_Consumption();
-
-    cout << "Car: " << Cars[amount_car].name << endl;
-    cout << "Count Wheels: " << Cars[amount_car].Number_Wheels << endl;
-    cout << "Engine Power: " << Cars[amount_car].Engine_Power << endl;
-    cout << "Speed: " << Cars[amount_car].Speed << endl;
-    cout << "Engine Consumtion:" << Cars[amount_car].Engine_Consumtion << endl;
-}
-
-
-int Car::Calculation_Number_GasStations(double Length_Rote)
-{
+    Mileage = Time = Number_Gas_Station = 0;
+    name = name_car;
+    Number_Wheels = nWheels;
+    Tank_Capacity = Tank;
+    Engine_Power = power;
+    Speed = Calculation_Speed();
     Engine_Consumtion = Calculation_Engine_Consumption();
-    Number_Wheels = ceil(Length_Rote/(Tank_Capacity/Engine_Consumtion));
-    return Number_Wheels;
 }
 
 
-void Passing(double* Travel_Time_array, double* count_Gas_Stations, string* array_name, int i, int j)
+void Car::output()
 {
-    double temp = Travel_Time_array[j];
-    Travel_Time_array[j] = Travel_Time_array[j+1];
-    Travel_Time_array[j+1] = temp;
-    int temp_refuelings = count_Gas_Stations[j];
-    count_Gas_Stations[j] = count_Gas_Stations[j+1];
-    count_Gas_Stations[j+1] = temp_refuelings;
-    string temp_name;
-    temp_name = array_name[j];
-    array_name[j] = array_name[j+1];
-    array_name[j+1] = temp_name;
+    cout << "Car: " << name << endl;
+    cout << "Count Wheels: " << Number_Wheels << endl;
+    cout << "Engine Power: " << Engine_Power << endl;
+    cout << "Speed: " << Speed << endl;
+    cout << "Engine Consumtion:" << Engine_Consumtion << endl;
+    cout << "Mileage: " << Mileage << endl;
 }
 
 
-void Sorting(double* Travel_Time_array, double* count_Gas_Stations, string* array_name, int amount_car)
+int Car::Calculation_Number_GasStations(double Mileage)
+{
+    Number_Gas_Station = (int)(((Mileage*(Engine_Consumtion/100))/Tank_Capacity));
+    return Number_Gas_Station;
+}
+
+
+void Sorting(Car *&Vehicle, int amount_car)
 {
     for(int i = 0; i < amount_car; i++)
     {
+ bool flag = true;
         for(int j = 0; j < amount_car-1; j++)
         {
-            if(Travel_Time_array[j]>Travel_Time_array[j+1])
+            bool flag = false;
+            if(Vehicle[j].Time > Vehicle[j+1].Time)
             {
-                Passing(Travel_Time_array, count_Gas_Stations, array_name, i, j);
+                swap(Vehicle[j].Time, Vehicle[j+1].Time);
+                swap(Vehicle[j].Number_Gas_Station, Vehicle[j+1].Number_Gas_Station);
+                swap(Vehicle[j].name, Vehicle[j+1].name);
             }
-            if(Travel_Time_array[j] == Travel_Time_array[j+1])
+            if(Vehicle[j].Time == Vehicle[j+1].Time)
             {
-                if(count_Gas_Stations[j] > count_Gas_Stations[j+1])
+                if(Vehicle[j].Number_Gas_Station > Vehicle[j+1].Number_Gas_Station)
                 {
-                    Passing(Travel_Time_array, count_Gas_Stations, array_name, i, j);
+                    swap(Vehicle[j].Time, Vehicle[j+1].Time);
+                    swap(Vehicle[j].Number_Gas_Station, Vehicle[j+1].Number_Gas_Station);
+                    swap(Vehicle[j].name, Vehicle[j+1].name);
                 }
             }
+        }
+        if (flag)
+        {
+            break;
         }
     }
 }
 
 
-void menu(int amount_car, Car *Cars)
-{
-    int exit = 0;
-    int press = 0;
-    int check = 0;
-    int i = -1;
-    int choise;
-    double Length_Route;
-    int Check_Length_Route = 0;
-    double* Travel_Time_array = new double[amount_car];
-    double* count_Gas_Stations = new double[amount_car];
-    string* array_name = new string[amount_car];
-    while(exit == 0)
+void menu(int i)
 {
     cout << "1 - Enter data about vehicles" << endl;
     cout << "2 - Database vehicles" << endl;
     cout << "3 - Enter the length of the route" << endl;
     cout << "4 - Calculation of the route passage" << endl;
-    if(Cars[amount_car].check_menu == 1)
+    if(i == 1)
     {
         cout << "5 - Output of the results of the passage of the route" << endl;
-        cout << "0 - Exit the program" << endl;
     }
-    else
+    cout << "0 - Exit the program" << endl;
+}
+
+void add_car(Car *&Vehicle, int &amount_car, Car cars)
+{
+        Car *tempArray;
+      if (Vehicle != nullptr)
+        {
+        tempArray = new Car[amount_car + 1];
+        for (int i = 0; i < amount_car; i++)
+        {
+          tempArray[i] = Vehicle[i];
+        }
+        delete[] Vehicle;
+      }
+       else
+        {
+        tempArray = new Car[1];
+        }
+      tempArray[amount_car] = cars;
+      Vehicle = tempArray;
+      amount_car++;
+}
+
+
+
+int main()
+{
+    Car *Vehicle = nullptr;
+    int exit = 0;
+    int results = 0;
+    while(exit == 0)
     {
-        cout << "0 - Exit the program" << endl;
-    }
-    cin >> choise;
-    IGNORE(choise);
-    switch(choise)
+        menu(results);
+        int press = 0;
+        int check = 0;
+        int choise;
+        double Length_Route;
+        int Check_Length_Route;
+        cin >> choise;
+        IGNORE(choise);
+       switch(choise)
     {
-        case 1:
-            new_page();
-            cout << "Enter number Vehicle:" << endl;
-            cin >> i;
-            IGNORE(i);
-            if(i <= amount_car && i > 0)
-             {
-                 i--;
-                 Car(i, Cars);
-             }
-             else
+        case 0:
+        {
+            cout << "If you want close programs press 1\n";
+            cin >> press;
+            IGNORE(press);
+            if(press == 1)
             {
-                    cout << "This Vehicle no in database" << endl;
-            }
-        break;
-        case 2:
-            new_page();
-            if(i >= 0)
-            {
-                cout << "Enter number Vehicle:" << endl;
-                cin >> i;
-                IGNORE(i);
-                if(i <= amount_car && i > 0)
-                 {
-                     i--;
-                     Cars[amount_car].output(i, Cars);
-                 }
-                 else
-                 {
-                        cout << "This Vehicle no in database" << endl;
-                 }
+                exit = 1;
             }
             else
             {
-                cout << "No Vehicle in database" << endl;
+                exit = 0;
             }
             break;
-        case 3:
+        }
+
+          case 1:
+        {
+            new_page();
+            string name_car = "";
+            int nWheels = 0;
+            double Tank = 0;
+            double power = 0;
+            cout << "Enter name of the car: ";
+            cin>> name_car;
+            do
+            {
+              cout << "Enter number of wheels: ";
+              cin >> nWheels;
+              check = IGNORE(nWheels);
+            }
+            while(check != 1);
+            do
+            {
+                cout << "Enter tank capacity: ";
+                cin >> Tank;
+                check = IGNORE(nWheels);
+            }
+            while(check != 1);
+            do
+            {
+                cout << "Enter engine power: ";
+                cin >> power;
+                check = IGNORE(power);
+            }
+            while(check != 1);
+            Car cars(name_car, nWheels, Tank, power);
+            add_car(Vehicle, amount_car, cars);
+            break;
+        }
+
+        case 2:
+        {
+          new_page();
+          for (int i = 0; i < amount_car; i++)
+          {
+              Vehicle[i].output();
+              cout << '\n' << endl;
+          }
+          break;
+        }
+
+         case (3):
+        {
             new_page();
             while(check == 0)
             {
@@ -247,100 +264,58 @@ void menu(int amount_car, Car *Cars)
             }
             check--;
             break;
-        case 4:
-            if(Check_Length_Route == 1)
+        }
+
+        case (4):
+        {
+           if(Check_Length_Route == 1 && amount_car > 0)
             {
                 for(int i = 0; i < amount_car; i++)
                 {
-                    check += Cars[i].Check_Number_Vehicle;
+                    Vehicle[i].Time = Vehicle[i].Calculation_Travel_Time(Length_Route);
+                    Vehicle[i].Number_Gas_Station = Vehicle[i].Calculation_Number_GasStations(Length_Route);
+                    Vehicle[i].name = Vehicle[i].get_name();
+                    Vehicle[i].Mileage += Length_Route;
                 }
-                if(check == amount_car)
-                {
-                    for(int i = 0; i < amount_car; i++)
-                    {
-                        Travel_Time_array[i] = Cars[i].Calculation_Travel_Time(Length_Route);
-                        count_Gas_Stations[i] = Cars[i].Calculation_Number_GasStations(Length_Route);
-                        array_name[i] = Cars[i].get_name();
-                    }
-                    Cars[amount_car].check_menu = 1;
-                    cout << "The time calculation was carried out successfully!" << endl;
-                }
-                else
-                {
-                    cout << "Enter information about all vehicles!" << endl;
-                }
+                results = 1;
+                cout << "The time calculation was carried out successfully!" << endl;
             }
             else
             {
                 cout << "Enter Length Route!" << endl;
             }
             break;
-        case 0:
-            cout << "If you want close programs press 1\n";
-            cin >> press;
-            IGNORE(press);
-            if(press == 1)
-            {
-                exit = 1;
-            }
-            else
-            {
-                exit = 0;
-            }
-        break;
-        case 5:
-            if(Cars[amount_car].check_menu == 1)
-        {
-            new_page();
-            Sorting(Travel_Time_array, count_Gas_Stations, array_name, amount_car);
-            {
-                int hours[amount_car];
-                double cur_time[amount_car];
-                int minutes[amount_car];
-                int seconds[amount_car];
-                for(int i = 0; i < amount_car; i++)
-                {
-                    cout << "The time of passing the route by car " << array_name[i] << endl;
-                    cout << "Time: " << Travel_Time_array[i] << endl;
-                    hours[i] = static_cast<int>(Travel_Time_array[i]);
-                    cur_time[i] = (Travel_Time_array[i] - hours[i])*60;
-                    minutes[i] = static_cast<int>(cur_time[i]);
-                    seconds[i] = static_cast<int>((cur_time[i] - minutes[i])*60);
-                    cout << "Time: " << hours[i] << ":" << minutes[i] << ":" << seconds[i] << endl;
-                    cout << "Count Gas Stations: " << count_Gas_Stations[i] << endl;
-                    cout << '\n' << endl;
-                }
-            }
         }
-        else
+        case (5):
         {
-            cout << "Error!" << endl;
+
+            new_page();
+            Sorting(Vehicle,amount_car);
+            for(int i = 0; i < amount_car; i++)
+            {
+                cout << "Car: " << Vehicle[i].name << endl;
+                Vehicle[i].output_time();
+                cout << "Count Gas Stations: " << Vehicle[i].Number_Gas_Station << endl;
+                cout << '\n' << endl;
+            }
         }
         break;
         default:
         cout<<"Error\n";
         break;
-    }
-}
-}
 
-
-int main()
-{
-    int size_array = -1;
-    while(size_array <= 0)
-    {
-        cout << "How many vehicles do you want to create?" << endl;
-        cin >> size_array;
-        IGNORE(size_array);
-        if(size_array <= 0)
-        {
-            cout << "Enter it again" << endl;
-        }
     }
-    Car *Cars = new Car[size_array];
-    menu(size_array, Cars);
-    delete [] Cars;
+    }
+    delete[] Vehicle;
     return 0;
 }
 
+void Car::output_time()
+{
+    double t = this-> Time;
+    int hours = (int)(t);
+    double cur_time = (t-hours)*60;
+    int minutes = (int)(cur_time);
+    int seconds = (int)((cur_time - minutes)*60);
+    cout << "Time: " << hours << ":" << minutes << ":" << seconds << endl;
+}
