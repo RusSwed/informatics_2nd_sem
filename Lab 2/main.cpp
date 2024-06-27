@@ -101,7 +101,7 @@ void Sorting(Car *&Vehicle, int amount_car)
     for(int i = 0; i < amount_car; i++)
     {
  bool flag = true;
-        for(int j = 0; j < amount_car-(i+1); j++)
+        for(int j = 0; j < amount_car-1; j++)
         {
             bool flag = false;
             if(Vehicle[j].Time > Vehicle[j+1].Time)
