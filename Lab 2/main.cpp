@@ -217,7 +217,7 @@ int main()
             {
                 cout << "Enter tank capacity: ";
                 cin >> Tank;
-                check = IGNORE(nWheels);
+                check = IGNORE(Tank);
             }
             while(check != 1);
             do
