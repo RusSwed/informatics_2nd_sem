@@ -129,21 +129,21 @@ public:
             wheels[i] = Wheel();
         }
         double capacity_tank;
-        do
-        {
+        //do
+        //{
             cout << "Enter tank capacity: ";
             cin >> capacity_tank;
-            check = IGNORE(capacity_tank);
-        }
-        while(check != 1);
+            //check = IGNORE(capacity_tank);
+        //}
+        //while(check != 1);
         double new_power;
-        do
-        {
+        //do
+        //{
             cout << "Enter engine power: ";
             cin >> new_power;
-            check = IGNORE(new_power);
-        }
-        while(check != 1);
+            //check = IGNORE(new_power);
+        //}
+        //while(check != 1);
         power = new_power;
         tank_capacity = capacity_tank;
         current_fuel_balance = capacity_tank;
@@ -202,7 +202,96 @@ public:
     int getNumberWheels(){return amount_wheels;}
 
     double getSpeed(){return current_speed;}
+
+    double Get_time_of_race(){return time;}
+
+    void Set_time_of_race(double time_of_race){this->time=time_of_race;}
+
+    double refueling(int lenght_Roude, int amount_car, TransportVehicle* &Vehicle, int i)
+    {
+        double number_of_refuelings;
+        number_of_refuelings=(floor)((((lenght_Roude/double(100)) * Vehicle[i].consumption)) / Vehicle[i].tank_capacity);
+        return number_of_refuelings;
+    }
+
+    void PrintAndSortRaceResults(int amount_car, double* time_of_the_race,TransportVehicle* &Vehicle ,int lenght_Roude)
+    {
+        string name_v[amount_car];
+        for(int i = 0; i < amount_car; i++){
+            name_v[i] = Vehicle[i].getName();
+        }
+        double num_refuelings[amount_car];
+        for (int i =0; i< amount_car; i++){
+            num_refuelings[i] = refueling(lenght_Roude, amount_car, Vehicle, i);
+        }
+        cout << "Determination complete!\n";
+        for (int i = 0; i < amount_car; i++) {
+            for (int j = 0; j < amount_car - 1; ++j) {
+                if (time_of_the_race[j] > time_of_the_race[j + 1] || (time_of_the_race[j] == time_of_the_race[j + 1] && num_refuelings[j] > num_refuelings[j + 1])) {
+                    swap(time_of_the_race[j], time_of_the_race[j + 1]);
+                    swap(num_refuelings[j], num_refuelings[j + 1]);
+                    swap(name_v[j], name_v[j + 1]);
+                }
+            }
+        }
+        for (int i = 0; i < amount_car; i++)
+            {
+            cout << "VEHICLE: " << name_v[i] << "\n";
+            double t = time_of_the_race[i];
+            int hours = (int)(t);
+            double cur_time = (t-hours)*60;
+            int minutes = (int)(cur_time);
+            int seconds = (int)((cur_time - minutes)*60);
+            cout << "Time: " << hours << ":" << minutes << ":" << seconds << endl;
+            cout << "AMOUNT REFUELING: " << num_refuelings[i] << "\n";
+    }
+
+
+}
+
+    void after_track()
+        {
+            for (int i = 0; i < amount_car; i++)
+            {
+                wheels[i].getStatus();
+            }
+        }
 };
+
+void Wheel_mileage(TransportVehicle* &Vehicle, int amount_car, double length_Roude)
+{
+    for (int i = 0; i < amount_car; i++) {
+        for (int j = 0; j < Vehicle[i].getNumberWheels(); j++)
+        {
+            Vehicle[i].wheels[j].check_status_wheel(length_Roude);
+            Vehicle[i].wheels[j].mileage += length_Roude;
+        }
+    }
+}
+
+
+
+
+
+
+
+void Calculation_track(double lenght_Roude, TransportVehicle* &Vehicle, int amount_car)
+{
+    long int number_refills[amount_car];
+    string name_v[amount_car];
+    double first_time_of_race;
+    double time_of_race[amount_car];
+    for (int i =0; i< amount_car; i++){
+    first_time_of_race = (lenght_Roude /Vehicle[i].getSpeed());
+      Vehicle[i].Set_time_of_race(first_time_of_race);
+    }
+    for (int i =0; i< amount_car; i++){
+      time_of_race[i] = Vehicle[i].Get_time_of_race();
+    }
+    TransportVehicle Car;
+    Car.PrintAndSortRaceResults(amount_car, time_of_race, Vehicle, lenght_Roude);
+}
+
 
 void add_car(TransportVehicle *&Vehicle, int &amount_car, TransportVehicle cars);
 
@@ -237,6 +326,25 @@ int IGNORE(int i)
     return check;
 }
 
+
+int IGNORE(double i)
+{
+    int check = 0;
+    while(cin.fail()){
+        cin.clear();
+        cin.ignore();
+        cout << "Enter Number!" << endl;
+    }
+    if(i > 0)
+    {
+        check = 1;
+    }
+    else
+    {
+        cout << "Error, Try Again" << endl;
+    }
+    return check;
+}
 void menu(int i)
 {
     cout << "1 - New Vehicle" << endl;
@@ -282,6 +390,7 @@ int main()
     int press = 0;
     int check = 0;
     double Length_Route = 0;
+    int Check_Length_Route = 0;
     while(exit == 0)
     {
         menu(results);
@@ -356,14 +465,33 @@ int main()
         {
            if(Check_Length_Route == 1 && amount_car > 0)
             {
-                for(int i = 0; i < amount_car; i++)
-                {
-                    Vehicle[i].Time = Vehicle[i].Calculation_Travel_Time(Length_Route);
-                    Vehicle[i].Number_Gas_Station = Vehicle[i].Calculation_Number_GasStations(Length_Route);
-                    Vehicle[i].name = Vehicle[i].get_name();
-                    Vehicle[i].Mileage += Length_Route;
-                }
+                new_page();
+                Calculation_track(Length_Route, Vehicle, amount_car);
+                Wheel_mileage(Vehicle, amount_car, Length_Route);
                 results = 1;
+                for (int k = 0; k < amount_car; ++k)
+                {
+                    bool needsAfterTrack = false;
+
+                    for (int j = 0; j < Vehicle[k].getNumberWheels(); ++j)
+                    {
+                        if (Vehicle[k].wheels[j].status == 0)
+                        {
+                            needsAfterTrack = true;
+                            break;
+                        }
+                    }
+
+                    if (needsAfterTrack)
+                    {
+                        Vehicle[k].after_track();
+                    }
+                }
+                for(int i=0;i<amount_car;++i)
+                {
+                    Vehicle[i].calculateSpeed();
+                    Vehicle[i].calculateCurrentFuelBalance(Vehicle[i].getTankCapacity(),Length_Route,Vehicle[i].refueling(Length_Route,amount_car, Vehicle, i), Vehicle[i].getConsumption());
+                }
                 cout << "The time calculation was carried out successfully!" << endl;
             }
             else
@@ -371,19 +499,6 @@ int main()
                 cout << "Enter Length Route!" << endl;
             }
             break;
-        }
-        case 5:
-        {
-
-            new_page();
-            Sorting(Vehicle,amount_car);
-            for(int i = 0; i < amount_car; i++)
-            {
-                cout << "Car: " << Vehicle[i].name << endl;
-                Vehicle[i].output_time();
-                cout << "Count Gas Stations: " << Vehicle[i].Number_Gas_Station << endl;
-                cout << '\n' << endl;
-            }
         }
         break;
         default:
