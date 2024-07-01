@@ -46,11 +46,6 @@ public:
     }
     double getStatus() const {return status;}
     double getWheelMileage() const {return mileage;}
-    void output()
-    {
-
-     }
-
 };
 
 
